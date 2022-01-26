@@ -30,6 +30,7 @@ type Table struct {
 	Slug       *string     `json:"slug,omitempty"`
 	Desc       *string     `json:"desc,omitempty"`
 	Total      *Triplet    `json:"total,omitempty"`
+	Units      *string     `json:"units,omitempty"`
 }
 
 // Tables defines model for Tables.
@@ -56,6 +57,7 @@ type TableCSV struct {
 	Name  string
 	Desc  string
 	Topic string
+	Units string
 }
 
 type CategoryCSV struct {
@@ -64,9 +66,9 @@ type CategoryCSV struct {
 	Table string
 }
 
-const topicsFile = "census_atlas_metadata__-_topics_(2011_metadata).csv"
-const tableFile = "census_atlas_metadata__-_tables_(2011_metadata).csv"
-const catFile = "census_atlas_metadata__-_categories_(2011_metadata).csv"
+const topicsFile = "LR_Copy_of_census_atlas_metadata__-_topics.csv"
+const tableFile = "LR_Copy_of_census_atlas_metadata__-_tables.csv"
+const catFile = "LR_Copy_of_census_atlas_metadata__-_categories.csv"
 const outputFile = "apiMetadata.json"
 
 func readCsvFile(filePath string) [][]string {
@@ -112,6 +114,7 @@ func parseTablesFromCSV() []TableCSV {
 				Name:  t[1],
 				Desc:  t[2],
 				Topic: t[3],
+				Units: t[4],
 			},
 		)
 	}
@@ -186,6 +189,7 @@ func main() {
 						Name:       spointer(table.Name),
 						Desc:       spointer(table.Desc),
 						Slug:       spointer(slug.Make(table.Name)),
+						Units:      spointer((table.Units)),
 						Total:      &total,
 					},
 				)
