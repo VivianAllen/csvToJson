@@ -1,11 +1,16 @@
 import json
 import re
+import pathlib
+import sys
 
 from csv import DictWriter
 
 if __name__=="__main__":
+    fp = pathlib.PurePath(sys.argv[1])
+
+
     # load raw csv
-    with open("./Find Insights Alpha - Census Atlas Information Architecture V3.csv") as f:
+    with open(fp) as f:
         miro_lines = f.readlines()
 
     # iterate through and pull out relevant lines as objects
@@ -50,6 +55,7 @@ if __name__=="__main__":
                 parsed_line_home["class"] = "sub-category"
 
             parsed_line_home["nomis_code"] = ""
+            parsed_line_home["nomis_desc"] = ""
             parsed_line_home["notes"] = ""
     
     # print to csv
@@ -63,6 +69,7 @@ if __name__=="__main__":
                     "desc": census_metadata_object["desc"],
                     "class": census_metadata_object["class"],
                     "nomis_code": census_metadata_object["nomis_code"],
+                    "nomis_desc": census_metadata_object["nomis_code"],
                     "notes": census_metadata_object["notes"]
                 }
             )
@@ -71,7 +78,7 @@ if __name__=="__main__":
         return
     csv_lines = []
     nested_appender(census_metadata)
-    with open('Find Insights Alpha - Census Atlas Information Architecture V3 parsed.csv', 'w') as f:
+    with open(fp.with_suffix(".parsed.csv"), 'w') as f:
         writer = DictWriter(f, fieldnames=csv_lines[0].keys())
         writer.writeheader()
         writer.writerows(csv_lines)
