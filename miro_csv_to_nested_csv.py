@@ -27,10 +27,30 @@ if __name__=="__main__":
             # ensure census_metadata has a home for the parsed_line
             parsed_line_home = census_metadata
             nestings = groups[1].split('-')
-            for nesting in nestings:
+            for i, nesting in enumerate(nestings):
                 # might as well do sorting while we're here...
                 parsed_line_home["children"] = {k: parsed_line_home["children"][k] for k in sorted(parsed_line_home["children"])}
-                parsed_line_home = parsed_line_home["children"].setdefault(int(nesting), {"children": {}})
+                # add a totals line to default childen if we're at table level (1)
+                if i == 1:
+                    default_obj = {
+                        "children": {
+                            0: {
+                                "id": '-'.join(nestings[:2]+["0"]),
+                                "parent": '-'.join(nestings[:2]),
+                                "name": "",
+                                "desc": "",
+                                "class": "category",
+                                "nomis_code": "",
+                                "nomis_type": "",
+                                "nomis_units": "",
+                                "nomis_desc": "",
+                                "notes": "",
+                                "children": {},
+                            }
+                        }}
+                else:
+                    default_obj = {"children": {}}
+                parsed_line_home = parsed_line_home["children"].setdefault(int(nesting), default_obj)
 
             # if descriptive text has more than four consecutive dashes it splits into name and desc
             desc_text = groups[0]
@@ -55,6 +75,8 @@ if __name__=="__main__":
                 parsed_line_home["class"] = "sub-category"
 
             parsed_line_home["nomis_code"] = ""
+            parsed_line_home["nomis_type"] = ""
+            parsed_line_home["nomis_units"] = ""
             parsed_line_home["nomis_desc"] = ""
             parsed_line_home["notes"] = ""
     
@@ -69,7 +91,9 @@ if __name__=="__main__":
                     "desc": census_metadata_object["desc"],
                     "class": census_metadata_object["class"],
                     "nomis_code": census_metadata_object["nomis_code"],
-                    "nomis_desc": census_metadata_object["nomis_code"],
+                    "nomis_type": census_metadata_object["nomis_type"],
+                    "nomis_units": census_metadata_object["nomis_units"],
+                    "nomis_desc": census_metadata_object["nomis_desc"],
                     "notes": census_metadata_object["notes"]
                 }
             )
