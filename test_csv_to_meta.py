@@ -1,12 +1,12 @@
 import csv
 import json
+import os
 import pathlib
 import shutil
 import tempfile
 
 from unittest import TestCase
 
-import csv_to_meta
 
 class TestCsvToMeta(TestCase):
 
@@ -45,8 +45,8 @@ class TestCsvToMeta(TestCase):
             ["Test Category 3_2", "Test Category 3_2 desc", "category", "test_category_3_2_code", "Households"],
         ])
        
-        # WHEN we call the main function of csv_to_meta
-        csv_to_meta.main(self.test_fp)
+        # WHEN we run the csv_to_meta script
+        os.system(f"python csv_to_meta.py {self.test_fp}")
 
         # THEN we expect to get a properly formatted JSON back
         expected = [
@@ -149,8 +149,8 @@ class TestCsvToMeta(TestCase):
             ["Test Category 3_2", "Test Category 3_2 desc", "category", "test_category_3_2_code", "Households"],
         ])
        
-        # WHEN we call the main function of csv_to_meta
-        csv_to_meta.main(self.test_fp)
+        # WHEN we run the csv_to_meta script
+        os.system(f"python csv_to_meta.py {self.test_fp}")
 
         # THEN we expect to get a properly formatted JSON back
         expected = [
@@ -264,8 +264,8 @@ class TestCsvToMeta(TestCase):
             ["Test Category 1_1_1", "", "sub-category", "test_category_1_1_1_code", "Person"],
         ])
         
-        # WHEN we call the main function of csv_to_meta
-        csv_to_meta.main(self.test_fp)
+        # WHEN we run the csv_to_meta script
+        os.system(f"python csv_to_meta.py {self.test_fp}")
 
         # THEN we expect to get a properly formatted JSON back, with lorem ipsum placeholder descriptions
         expected = [
