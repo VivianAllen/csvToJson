@@ -8,14 +8,11 @@ from csv import DictReader
 def slugify(name):
     return "-".join(re.sub(r"[^a-zA-Z0-9]", " ", name.lower()).split())
 
-if __name__=="__main__":
-    fp = pathlib.PurePath(sys.argv[1])
-
+def main(fp):
 
     # load csv
     with open(fp) as f:
         rows = DictReader(f)
-    
         curr_topic = {}
         curr_table = {}
         topics = []
@@ -37,8 +34,9 @@ if __name__=="__main__":
                 }
                 
             
-            # if table class write out old topic unless its empty and reset, NB ignore tables with no code
+            # if table class write out old table unless its empty and reset, NB ignore tables with no code
             if row['class'] == 'table' and row['nomis_code'] != "":
+                print(row)
                 if curr_table:
                     curr_topic['tables'].append(curr_table)
                 curr_table = {
@@ -53,7 +51,7 @@ if __name__=="__main__":
 
                 # units are in the categories and need some translation
                 if row['nomis_units'] == 'Person':
-                    curr_table['units'] = "People (usual residents)"
+                    curr_table['units'] = "People"
                 else:
                     curr_table['units'] = "Households"
                 category = {
@@ -66,5 +64,17 @@ if __name__=="__main__":
                 else:
                     curr_table['categories'].append(category)
 
+        # if we still have a topic after the loop, write it
+        if curr_topic:
+            if curr_table:
+                curr_topic['tables'].append(curr_table)
+            topics.append(curr_topic) 
+
+
     with open(fp.with_suffix(".apiMetadata.json"), 'w') as f:
        json.dump(topics, f, indent=2)
+
+
+if __name__=="__main__":
+    fp = pathlib.PurePath(sys.argv[1])
+    main(fp)

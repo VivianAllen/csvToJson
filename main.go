@@ -66,10 +66,7 @@ type CategoryCSV struct {
 	Table string
 }
 
-const topicsFile = "LR_Copy_of_census_atlas_metadata__-_topics.csv"
-const tableFile = "LR_Copy_of_census_atlas_metadata__-_tables.csv"
-const catFile = "LR_Copy_of_census_atlas_metadata__-_categories.csv"
-const outputFile = "apiMetadata.json"
+const allFile = "Find Insights Alpha - Census Atlas Information Architecture V4.parsed - V4_1.csv"
 
 func readCsvFile(filePath string) [][]string {
 	f, err := os.Open(filePath)
@@ -85,6 +82,22 @@ func readCsvFile(filePath string) [][]string {
 	}
 
 	return records
+}
+
+func parseAllFromCSV() ([]TopicCSV, []TableCSV, []CategoryCSV) {
+	allLines := readCsvFile(topicsFile)
+	var allCSV []TopicCSV
+	for _, t := range topicsLines[1:] {
+		topicsCSV = append(
+			topicsCSV,
+			TopicCSV{
+				Code: t[0],
+				Name: t[1],
+				Desc: t[2],
+			},
+		)
+	}
+	return topicsCSV
 }
 
 func parseTopicsFromCSV() []TopicCSV {
@@ -142,9 +155,7 @@ func isTotalCat(catName string) bool {
 }
 
 func main() {
-	topicsRaw := parseTopicsFromCSV()
-	tablesRaw := parseTablesFromCSV()
-	catsRaw := parseCatsFromCSV()
+	topicsRaw, tablesRaw, catsRaw := parseAllFromCSV()
 
 	// iterate through topics
 	var mdr MetadataResponse
